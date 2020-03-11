@@ -1,11 +1,14 @@
 import React from "react";
 import "./App.css";
 import styled from "styled-components";
+import Draggable from "./components/draggable";
 
 function App() {
   return (
     <Container>
-      <Rect />
+      <Draggable>
+        <Rect />
+      </Draggable>
     </Container>
   );
 }

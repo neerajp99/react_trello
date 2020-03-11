@@ -18,22 +18,43 @@ const Draggable = ({ children }) => {
   });
 
   // HandleMouseDown function using useCallback hook
-  const handleMouseDown = useCallback(({ positionX, positionY }) => {
+  const handleMouseDown = useCallback(({ clientX, clientY }) => {
     setDraggableState(draggableState => ({
       ...draggableState,
       isDragging: true,
       origin: {
-        x: positionX,
-        y: positionY
+        x: clientX,
+        y: clientY
       }
     }));
   }, []);
 
   // HandleMouseMove function using useCallback hook
-  const handleMouseMove = useCallback(() => {}, []);
+  const handleMouseMove = useCallback(
+    ({ clientX, clientY }) => {
+      // Store the current distance in the translation variable
+      const translation = {
+        x: clientX - draggableState.origin.x,
+        y: clientY - draggableState.origin.y
+      };
+
+      // Call the setState hook
+      setDraggableState(draggableState => ({
+        ...draggableState,
+        translation: translation
+      }));
+    },
+    [draggableState.origin]
+  );
 
   // HandleMouseUp function using useCallback hook
-  const handleMouseUp = useCallback(() => {}, []);
+  const handleMouseUp = useCallback(() => {
+    // Call the setState hook to update state
+    setDraggableState(draggableState => ({
+      ...draggableState,
+      isDragging: false
+    }));
+  }, []);
 
   // If there is any change in the render, call useEffect hook
   useEffect(
@@ -58,9 +79,9 @@ const Draggable = ({ children }) => {
   const styles = useMemo(
     () => ({
       cursor: draggableState.isDragging ? "-webkit-grabbing" : "-webkit-grab",
-      transform: `translate(${draggableState.translation.x}, ${
+      transform: `translate(${draggableState.translation.x}px, ${
         draggableState.translation.y
-      })`,
+      }px)`,
       transition: draggableState.isDragging ? "none" : "transform 500ms",
       zIndex: draggableState.isDragging ? 2 : 1,
       position: draggableState.isDragging ? "absolute" : "relative"

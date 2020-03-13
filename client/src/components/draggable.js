@@ -10,7 +10,7 @@ import React, {
 const POSITION = { x: 0, y: 0 };
 
 // Draggable field fucntion starts here
-const Draggable = ({ children }) => {
+const Draggable = ({ children, onDrag, onDragEnd, onDragId }) => {
   const [draggableState, setDraggableState] = useState({
     isDragging: false,
     origin: POSITION,
@@ -43,18 +43,25 @@ const Draggable = ({ children }) => {
         ...draggableState,
         translation: translation
       }));
+      onDrag({ translation, onDragId });
     },
-    [draggableState.origin]
+    [draggableState.origin, onDrag, onDragId]
   );
 
   // HandleMouseUp function using useCallback hook
-  const handleMouseUp = useCallback(() => {
-    // Call the setState hook to update state
-    setDraggableState(draggableState => ({
-      ...draggableState,
-      isDragging: false
-    }));
-  }, []);
+  const handleMouseUp = useCallback(
+    () => {
+      // Call the setState hook to update state
+      setDraggableState(draggableState => ({
+        ...draggableState,
+        isDragging: false
+      }));
+
+      // onDragEnd for creating a sorted list
+      onDragEnd();
+    },
+    [onDragEnd]
+  );
 
   // If there is any change in the render, call useEffect hook
   useEffect(

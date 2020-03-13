@@ -5,7 +5,7 @@ import Draggable from "./components/draggable";
 import { range, inRange } from "lodash";
 
 // Use a max size for array
-const MAX = 6;
+const MAX = 5;
 const HEIGHT = 80;
 
 function App() {
@@ -38,25 +38,38 @@ function App() {
       arraySetState(arrayState => ({
         ...arrayState,
         draggedIndex: onDragId,
-        dragOrder
+        dragOrder: dragOrder
       }));
     },
     [arrayState.order, items.length]
   );
 
-  const onHandleDragEnd = useCallback(() => {}, []);
+  const onHandleDragEnd = useCallback(() => {
+    arraySetState(arrayState => ({
+      ...arrayState,
+      order: arrayState.dragOrder,
+      draggedIndex: null
+    }));
+  }, []);
 
   return (
     <Container>
       {items.map(index => {
-        const top = arrayState.order.indexOf(index) * (HEIGHT + 10);
+        // Remove the css transition calculate the op position differently from the dragged one
+        const isDragging = arrayState.draggedIndex === index;
+        // Calculate the top position of dragged element
+        const draggedTop = arrayState.order.indexOf(index) * (HEIGHT + 10);
+        const top = arrayState.dragOrder.indexOf(index) * (HEIGHT + 10);
         return (
           <Draggable
             key={index}
+            onDragId={index}
             onDrag={onHandleDrag}
             onDragEnd={onHandleDragEnd}
           >
-            <Rect top={top}>{index}</Rect>
+            <Rect isDragging={isDragging} top={isDragging ? draggedTop : top}>
+              {index}
+            </Rect>
           </Draggable>
         );
       })}
@@ -71,10 +84,12 @@ const Container = styled.div`
   min-height: 100vh;
 `;
 
-const Rect = styled.div.attrs(props => {
+const Rect = styled.div.attrs(props => ({
   style: {
+    top: `${props.top}px`,
+    transition: props.isDragging ? "none" : "all 500ms"
   }
-})`
+}))`
   width: 300px;
   height: ${HEIGHT}px;
   user-select: none;
@@ -87,5 +102,4 @@ const Rect = styled.div.attrs(props => {
   left: calc(50vw - 150px);
   font-size: 20px;
   color: #777;
-  top: ${({ top }) => `${top}px`};
 `;

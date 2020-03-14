@@ -82,6 +82,8 @@ export default App;
 const Container = styled.div`
   width: 100vw;
   min-height: 100vh;
+  position: absolute;
+  left: -30vw;
 `;
 
 const Rect = styled.div.attrs(props => ({

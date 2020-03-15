@@ -22,9 +22,19 @@ const initalData = {
       id: "column-1",
       title: "To Do",
       tasksId: ["task-1", "task-2", "task-3", "task-4"]
-    }
+    },
+    "column-2": {
+      id: "column-2",
+      title: "In Progress",
+      tasksId: []
+    },
+    "column-3": {
+      id: "column-3",
+      title: "Done",
+      tasksId: []
+    },
   },
-  columnOrder: ["column"]
+  columnOrder: ["column-1", "column-2", "column-3"]
 };
 
 export default initalData;
